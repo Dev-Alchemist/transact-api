@@ -1,0 +1,36 @@
+Table users {
+  id bigint [primary key, increment]
+  email varchar
+  encrypted_password varchar
+  phone_number varchar
+  created_at datetime
+  updated_at datetime
+}
+
+Table transactions {
+  id bigint [primary key, increment]
+  sender_id bigint [ref: > users.id]
+  recipient_id bigint [ref: > users.id]
+  recipient_type varchar
+  amount decimal(10, 2)
+  created_at datetime
+  updated_at datetime
+}
+
+Table topups {
+  id bigint [primary key, increment]
+  user_id bigint [ref: > users.id]
+  amount decimal(10, 2)
+  created_at datetime
+  updated_at datetime
+}
+
+Table notifications {
+  id bigint [primary key, increment]
+  recipient_id bigint [ref: > users.id]
+  recipient_type varchar
+  subject varchar
+  content text
+  created_at datetime
+  updated_at datetime
+}
