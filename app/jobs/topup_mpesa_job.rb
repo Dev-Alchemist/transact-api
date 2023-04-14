@@ -24,7 +24,7 @@ class TopupMpesaJob < ApplicationJob
       reference: @topup.reference,
       trans_desc: "Topup charge for "
     )
-  end  
+  end
 
   def formatted_phone(phone_number)
     return phone_number if phone_number.to_s.start_with?("254")
@@ -33,7 +33,7 @@ class TopupMpesaJob < ApplicationJob
   end
 
   def callback_url
-    ENV['STK_CALLBACK_URL']
+    ENV["STK_CALLBACK_URL"]
   end
 
   def client
@@ -42,7 +42,7 @@ class TopupMpesaJob < ApplicationJob
       secret: Rails.application.credentials.mpesa[:secret],
       pass_key: Rails.application.credentials.mpesa[:pass_key],
       shortcode: Rails.application.credentials.mpesa[:shortcode],
-      env: Rails.env.production? ? 'production' : 'sandbox'
+      env: Rails.env.production? ? "production" : "sandbox"
     )
   end
 end

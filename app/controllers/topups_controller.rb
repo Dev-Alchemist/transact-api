@@ -16,7 +16,7 @@ class TopupsController < ApplicationController
         render json: {success: false, message: "MPESA stk push failed"}, status: :unprocessable_entity
       end
     end
-  end  
+  end
 
   def stk_result
     callback_body = params.require(:Body).permit(stkCallback: {})

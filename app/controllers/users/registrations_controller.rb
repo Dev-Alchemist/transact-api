@@ -7,13 +7,13 @@ class Users::RegistrationsController < Devise::RegistrationsController
     begin
       resource.save
     rescue ActiveRecord::RecordNotUnique
-      render json: { message: "Email already taken." }, status: :conflict
+      render json: {message: "Email already taken."}, status: :conflict
       return
     end
 
     yield resource if block_given?
     if resource.persisted?
-      render json: { message: "Signed up." }
+      render json: {message: "Signed up."}
     else
       register_failed
     end
@@ -26,6 +26,6 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def register_failed
-    render json: { message: "Signed up failure." }, status: :unprocessable_entity
+    render json: {message: "Signed up failure."}, status: :unprocessable_entity
   end
 end
