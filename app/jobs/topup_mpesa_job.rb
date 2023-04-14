@@ -2,10 +2,10 @@ class TopupMpesaJob < ApplicationJob
   queue_as :default
   sidekiq_options retry: false
 
-  def perform(topup_id:, phone: nil, amount: nil)
+  def perform(topup_id:, phone_number: nil, amount: nil)
     @topup = Topup.find(topup_id)
-    charge_response = charge(phone: phone, amount: amount)
-    if charge_response.ResponseCode.to_i.zero?
+    charge_response = charge(phone_number: phone_number, amount: amount)
+    if charge_response.is_a?(Mpesa::Response) && charge_response.ResponseCode.to_i.zero?
       @topup.update(
         status: "charged",
         checkout_request_id: charge_response.CheckoutRequestID,
@@ -16,24 +16,24 @@ class TopupMpesaJob < ApplicationJob
 
   private
 
-  def charge(phone: nil, amount: nil)
+  def charge(phone_number: nil, amount: nil)
     client.stk(
       amount: @topup.amount.to_i || amount.to_i,
-      phone: formatted_phone(phone || @topup.phone),
+      phone: formatted_phone(phone_number || @topup.phone_number),
       callback_url: callback_url,
       reference: @topup.reference,
       trans_desc: "Topup charge for "
     )
-  end
+  end  
 
-  def formatted_phone(phone)
-    return phone if phone.to_s.start_with?("254")
+  def formatted_phone(phone_number)
+    return phone_number if phone_number.to_s.start_with?("254")
 
-    phone.to_s.gsub(/^0?(\d+)/, '254\1')
+    phone_number.to_s.gsub(/^0?(\d+)/, '254\1')
   end
 
   def callback_url
-    "https://transact.free.beeceptor.com"
+    ENV['STK_CALLBACK_URL']
   end
 
   def client
@@ -41,7 +41,8 @@ class TopupMpesaJob < ApplicationJob
       key: Rails.application.credentials.mpesa[:key],
       secret: Rails.application.credentials.mpesa[:secret],
       pass_key: Rails.application.credentials.mpesa[:pass_key],
-      shortcode: Rails.application.credentials.mpesa[:shortcode]
+      shortcode: Rails.application.credentials.mpesa[:shortcode],
+      env: Rails.env.production? ? 'production' : 'sandbox'
     )
   end
 end

@@ -5,6 +5,7 @@ class CreateTopups < ActiveRecord::Migration[7.0]
       t.decimal :amount
       t.string :reference
       t.string :phone_number
+      t.string :status
       t.jsonb :data
 
       t.timestamps

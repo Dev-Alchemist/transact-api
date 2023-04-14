@@ -10,15 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_13_172743) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_13_213907) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "jwt_denylist", force: :cascade do |t|
+    t.string "jti", null: false
+    t.datetime "exp", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["jti"], name: "index_jwt_denylist_on_jti"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.string "recipient_type", null: false
+    t.bigint "recipient_id", null: false
+    t.string "type", null: false
+    t.jsonb "params"
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["read_at"], name: "index_notifications_on_read_at"
+    t.index ["recipient_type", "recipient_id"], name: "index_notifications_on_recipient"
+  end
 
   create_table "topups", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.decimal "amount"
     t.string "reference"
     t.string "phone_number"
+    t.string "status"
     t.jsonb "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -32,6 +53,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_13_172743) do
     t.decimal "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "sender_balance_before", precision: 8, scale: 2, default: "0.0", null: false
+    t.decimal "sender_balance_after", precision: 8, scale: 2, default: "0.0", null: false
+    t.decimal "recipient_balance_before", precision: 8, scale: 2, default: "0.0", null: false
+    t.decimal "recipient_balance_after", precision: 8, scale: 2, default: "0.0", null: false
     t.index ["recipient_type", "recipient_id"], name: "index_transactions_on_recipient"
     t.index ["sender_id"], name: "index_transactions_on_sender_id"
   end
@@ -45,6 +70,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_13_172743) do
     t.string "phone_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "balance", precision: 8, scale: 2, default: "0.0"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

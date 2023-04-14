@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  recipient: one
+  recipient_type: Recipient
+  type: 
+  params: 
+  read_at: 2023-04-14 00:03:07
+
+two:
+  recipient: two
+  recipient_type: Recipient
+  type: 
+  params: 
+  read_at: 2023-04-14 00:03:07

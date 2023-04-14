@@ -20,11 +20,16 @@ Table transactions {
 Table topups {
   id bigint [primary key, increment]
   user_id bigint [ref: > users.id]
-  amount decimal(10, 2)
+  amount decimal(8, 2)
+  status varchar
+  phone_number varchar
+  data jsonb [note: 'entire :callback body']
   created_at datetime
   updated_at datetime
-}
 
+  Note: 'table to track cash deposits via Mpesa'
+}
+// use noticed gem for this
 Table notifications {
   id bigint [primary key, increment]
   recipient_id bigint [ref: > users.id]
