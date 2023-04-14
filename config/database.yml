@@ -81,6 +81,7 @@ test:
 #
 production:
   <<: *default
+  url: <%= ENV['DATABASE_URL'] %>
   database: transact_api_production
   username: transact_api
   password: <%= ENV["TRANSACT_API_DATABASE_PASSWORD"] %>
