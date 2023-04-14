@@ -1,6 +1,6 @@
 class TopupsController < ApplicationController
   before_action :authenticate_user!
-  skip_before_action :verify_authenticity_token, :authenticate_user!, only: [:stk_result]
+  # skip_before_action :verify_authenticity_token, :authenticate_user!, only: [:stk_result]
 
   def new
     @topup = current_user.topups.build
