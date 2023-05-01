@@ -1,9 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  user: one
-  amount: 9.99
+john_topup:
+  user: john
+  amount: 10.00
+  reference: "TRANSACT/2023/5/1"
+  phone_number: "1234567890"
+  status: "pending"
+  data:
+    checkout_request_id: 1234
 
-two:
-  user: two
-  amount: 9.99
+jane_topup:
+  user: jane
+  amount: 5.00
+  reference: "TRANSACT/2023/5/2"
+  phone_number: "0987654321"
+  status: "paid"
+  data:
+    checkout_request_id: 5678
