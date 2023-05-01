@@ -2,22 +2,19 @@ class TransactionsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @transactions = current_user.sent_transactions.or(current_user.received_transactions).order(created_at: :desc)
+    @transactions = current_user.sent_and_received_transactions.order(created_at: :desc)
     @transactions = @transactions.where(created_at: date_range) if date_range.present?
 
     render :index
   end
 
   def create
-    recipient = User.find_by(email: params[:recipient_email]) || User.find_by(phone_number: params[:recipient_phone_number])
+    recipient = User.find_by(email: params[:transaction][:recipient_email]) || User.find_by(phone_number: params[:transaction][:recipient_phone_number])
     if recipient
-      if current_user.balance >= params[:amount].to_d
-        transaction = current_user.sent_transactions.build(recipient: recipient, amount: params[:amount])
+      if current_user.balance >= params[:transaction][:amount].to_d
+        transaction = current_user.sent_transactions.build(recipient: recipient, amount: params[:transaction][:amount])
 
         if transaction.save
-          TransactionMailer.confirmation_email(transaction).deliver_later
-          TransactionNotification.with(sender: current_user, amount: params[:amount]).deliver(recipient)
-
           render json: {message: "Transaction successful"}, status: :created
         else
           render json: {error: transaction.errors.full_messages.join(", ")}, status: :unprocessable_entity

@@ -4,7 +4,7 @@ class Transaction < ApplicationRecord
 
   validates :amount, presence: true, numericality: {greater_than: 0}
 
-  after_create :update_balances
+  after_create :update_balances, :send_notifications
 
   private
 
@@ -18,5 +18,10 @@ class Transaction < ApplicationRecord
       recipient_balance_before: recipient.balance_before_last_save,
       recipient_balance_after: recipient.balance
     )
+  end
+
+  def send_notifications
+    TransactionMailer.confirmation_email(self).deliver_later
+    TransactionNotification.with(sender: sender, amount: amount).deliver(recipient)
   end
 end
