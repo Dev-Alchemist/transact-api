@@ -4,24 +4,9 @@ class Transaction < ApplicationRecord
 
   validates :amount, presence: true, numericality: {greater_than: 0}
 
-  after_create :update_balances, :send_notifications
-
-  private
-
-  def update_balances
-    sender.update(balance: sender.balance - amount)
-    recipient.update(balance: recipient.balance + amount)
-
-    update(
-      sender_balance_before: sender.balance_before_last_save,
-      sender_balance_after: sender.balance,
-      recipient_balance_before: recipient.balance_before_last_save,
-      recipient_balance_after: recipient.balance
-    )
-  end
-
-  def send_notifications
-    TransactionMailer.confirmation_email(self).deliver_later
-    TransactionNotification.with(sender: sender, amount: amount).deliver(recipient)
-  end
+  scope :between_dates, lambda { |start_date, end_date|
+                          if start_date.present? && end_date.present?
+                            where(created_at: start_date.to_time.beginning_of_day..end_date.to_time.end_of_day)
+                          end
+                        }
 end
